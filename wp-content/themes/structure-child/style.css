@@ -1,0 +1,203 @@
+/*
+Theme Name:   Structure Template (Hello Elementor Child)
+Theme URI:    https://example.com/
+Description:  Child theme of Hello Elementor for the structural website template.
+              Everything visual lives in Elementor; this file only holds the few
+              rules for markup Elementor does not generate (language switcher,
+              newsletter placeholder, contact form).
+Author:       Anirudha Talmale
+Template:     hello-elementor
+Version:      1.0.0
+Text Domain:  structure-child
+*/
+
+/* --------------------------------------------------------------- typography */
+
+/*
+ * Bind the whole site to Elementor's Global Fonts.
+ *
+ * Defining "Primary" and "Text" under Site Settings > Global Fonts only emits
+ * CSS variables — nothing consumes them unless a widget explicitly references
+ * the global, and these layouts set their own sizes per heading, which cannot
+ * be combined with a global reference. Without these rules the font names are
+ * stored and shown in the panel while every heading silently falls back to the
+ * theme's system stack.
+ *
+ * Pointing the base elements at the variables means changing the two entries in
+ * Global Fonts restyles the entire site, which is the whole point of setting
+ * them globally.
+ */
+body,
+.elementor-widget-text-editor,
+.elementor-widget-icon-box .elementor-icon-box-description,
+.elementor-widget-icon-list,
+.elementor-widget-toggle .elementor-tab-content,
+.wpcf7 input,
+.wpcf7 textarea {
+	font-family: var(--e-global-typography-text-font-family), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.elementor-heading-title,
+.elementor-widget-icon-box .elementor-icon-box-title,
+.elementor-widget-counter .elementor-counter-number-wrapper,
+.elementor-widget-toggle .elementor-toggle-title,
+.elementor-button,
+.wpcf7 label,
+.wpcf7 input[type="submit"],
+.ug-newsletter button,
+.hfe-nav-menu a {
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------- language switch */
+
+.ug-lang {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.ug-lang a {
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: .5px;
+	text-decoration: none;
+	line-height: 1;
+}
+
+.ug-lang a:hover,
+.ug-lang a.is-active {
+	color: var(--e-global-color-accent);
+}
+
+@media (max-width: 767px) {
+	.ug-lang { justify-content: center; margin-top: 10px; }
+}
+
+/* ------------------------------------------------- newsletter (placeholder) */
+
+.ug-newsletter {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: flex-start;
+	max-width: 380px;
+}
+
+.ug-newsletter input[type="email"] {
+	width: 100%;
+	padding: 16px 18px;
+	border: 0;
+	border-radius: 0;
+	background: #FFFFFF;
+	color: #2B2B2B;
+	font-size: 15px;
+}
+
+.ug-newsletter button {
+	padding: 15px 30px;
+	border: 2px solid var(--e-global-color-accent);
+	border-radius: 0;
+	background: var(--e-global-color-accent);
+	color: var(--e-global-color-secondary);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background .2s ease, color .2s ease;
+}
+
+.ug-newsletter button:hover {
+	background: transparent;
+	color: var(--e-global-color-accent);
+}
+
+.ug-newsletter .ug-note {
+	color: #8A9096;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+/* ------------------------------------------------------------- contact form */
+
+.wpcf7 .ug-field { margin-bottom: 22px; }
+
+.wpcf7 label {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--e-global-color-secondary);
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.wpcf7 .ug-row {
+	display: flex;
+	gap: 18px;
+	flex-wrap: wrap;
+}
+
+.wpcf7 .ug-row > * { flex: 1 1 200px; }
+
+.wpcf7 input[type="text"],
+.wpcf7 input[type="email"],
+.wpcf7 input[type="tel"],
+.wpcf7 textarea {
+	width: 100%;
+	padding: 14px 16px;
+	border: 2px solid var(--e-global-color-secondary);
+	border-radius: 0;
+	background: #FFFFFF;
+	color: #2B2B2B;
+	font-family: inherit;
+	font-size: 16px;
+}
+
+.wpcf7 input:focus,
+.wpcf7 textarea:focus {
+	outline: 2px solid var(--e-global-color-accent);
+	outline-offset: 1px;
+}
+
+.wpcf7 input[type="submit"] {
+	padding: 17px 36px;
+	border: 2px solid var(--e-global-color-secondary);
+	border-radius: 0;
+	background: var(--e-global-color-secondary);
+	color: var(--e-global-color-accent);
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background .2s ease, color .2s ease;
+}
+
+.wpcf7 input[type="submit"]:hover {
+	background: transparent;
+	color: var(--e-global-color-secondary);
+}
+
+/* ------------------------------------------------------------ footer links */
+
+.ehf-footer a {
+	color: var(--e-global-color-accent);
+	text-decoration: none;
+}
+
+.ehf-footer a:hover {
+	text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ helpers */
+
+/* Placeholder images keep their aspect ratio when a card stretches. */
+.ug-card-media img { width: 100%; height: auto; display: block; }
+
+/* Keep the angled dividers from ever producing a horizontal scrollbar. */
+body { overflow-x: hidden; }
