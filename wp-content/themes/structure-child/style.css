@@ -1,0 +1,550 @@
+/*
+Theme Name:   Structure Template (Hello Elementor Child)
+Theme URI:    https://example.com/
+Description:  Child theme of Hello Elementor for the structural website template.
+              Everything visual lives in Elementor; this file only holds the few
+              rules for markup Elementor does not generate (language switcher,
+              newsletter placeholder, contact form).
+Author:       Anirudha Talmale
+Template:     hello-elementor
+Version:      1.0.0
+Text Domain:  structure-child
+*/
+
+/* --------------------------------------------------------------- typography */
+
+/*
+ * Bind the whole site to Elementor's Global Fonts.
+ *
+ * Defining "Primary" and "Text" under Site Settings > Global Fonts only emits
+ * CSS variables — nothing consumes them unless a widget explicitly references
+ * the global, and these layouts set their own sizes per heading, which cannot
+ * be combined with a global reference. Without these rules the font names are
+ * stored and shown in the panel while every heading silently falls back to the
+ * theme's system stack.
+ *
+ * Pointing the base elements at the variables means changing the two entries in
+ * Global Fonts restyles the entire site, which is the whole point of setting
+ * them globally.
+ */
+body,
+.elementor-widget-text-editor,
+.elementor-widget-icon-box .elementor-icon-box-description,
+.elementor-widget-icon-list,
+.elementor-widget-toggle .elementor-tab-content,
+.wpcf7 input,
+.wpcf7 textarea {
+	font-family: var(--e-global-typography-text-font-family), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.elementor-heading-title,
+.elementor-widget-icon-box .elementor-icon-box-title,
+.elementor-widget-counter .elementor-counter-number-wrapper,
+.elementor-widget-toggle .elementor-toggle-title,
+.elementor-button,
+.wpcf7 label,
+.wpcf7 input[type="submit"],
+.ug-newsletter button,
+.hfe-nav-menu a {
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------- language switch */
+
+.ug-lang {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.ug-lang a {
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: .5px;
+	text-decoration: none;
+	line-height: 1;
+}
+
+.ug-lang a:hover,
+.ug-lang a.is-active {
+	color: var(--e-global-color-accent);
+}
+
+@media (max-width: 767px) {
+	.ug-lang { justify-content: center; margin-top: 10px; }
+}
+
+/* ------------------------------------------------- newsletter (placeholder) */
+
+.ug-newsletter {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: flex-start;
+	max-width: 380px;
+}
+
+.ug-newsletter input[type="email"] {
+	width: 100%;
+	padding: 16px 18px;
+	border: 0;
+	border-radius: 0;
+	background: #FFFFFF;
+	color: #2B2B2B;
+	font-size: 15px;
+}
+
+.ug-newsletter button {
+	padding: 15px 30px;
+	border: 2px solid var(--e-global-color-accent);
+	border-radius: 0;
+	background: var(--e-global-color-accent);
+	color: var(--e-global-color-secondary);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background .2s ease, color .2s ease;
+}
+
+.ug-newsletter button:hover {
+	background: transparent;
+	color: var(--e-global-color-accent);
+}
+
+.ug-newsletter .ug-note {
+	color: #8A9096;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+/* ------------------------------------------------------------- contact form */
+
+.wpcf7 .ug-field { margin-bottom: 22px; }
+
+.wpcf7 label {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--e-global-color-secondary);
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.wpcf7 .ug-row {
+	display: flex;
+	gap: 18px;
+	flex-wrap: wrap;
+}
+
+.wpcf7 .ug-row > * { flex: 1 1 200px; }
+
+.wpcf7 input[type="text"],
+.wpcf7 input[type="email"],
+.wpcf7 input[type="tel"],
+.wpcf7 textarea {
+	width: 100%;
+	padding: 14px 16px;
+	border: 2px solid var(--e-global-color-secondary);
+	border-radius: 0;
+	background: #FFFFFF;
+	color: #2B2B2B;
+	font-family: inherit;
+	font-size: 16px;
+}
+
+.wpcf7 input:focus,
+.wpcf7 textarea:focus {
+	outline: 2px solid var(--e-global-color-accent);
+	outline-offset: 1px;
+}
+
+.wpcf7 input[type="submit"] {
+	padding: 17px 36px;
+	border: 2px solid var(--e-global-color-secondary);
+	border-radius: 0;
+	background: var(--e-global-color-secondary);
+	color: var(--e-global-color-accent);
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background .2s ease, color .2s ease;
+}
+
+.wpcf7 input[type="submit"]:hover {
+	background: transparent;
+	color: var(--e-global-color-secondary);
+}
+
+/* ------------------------------------------------------------ footer links */
+
+.ehf-footer a {
+	color: var(--e-global-color-accent);
+	text-decoration: none;
+}
+
+.ehf-footer a:hover {
+	text-decoration: underline;
+}
+
+/* ------------------------------------------------------------ scroll motion */
+
+/*
+ * Blocks rise into place once, as they arrive. The JS adds .is-visible; if the
+ * JS never runs nothing here applies and the page is simply static, because the
+ * content must never depend on the animation.
+ */
+.ug-reveal.is-visible,
+.ug-reveal.is-visible > .e-con {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.ug-reveal {
+		opacity: 0;
+		transform: translateY(44px);
+		transition: opacity .8s cubic-bezier(.22, .61, .36, 1),
+		            transform .8s cubic-bezier(.22, .61, .36, 1);
+		will-change: opacity, transform;
+	}
+
+	/* Children of a revealed row arrive in sequence, not as one slab. */
+	.ug-reveal .e-con-inner > .e-con {
+		opacity: 0;
+		transform: translateY(26px);
+		transition: opacity .65s cubic-bezier(.22, .61, .36, 1),
+		            transform .65s cubic-bezier(.22, .61, .36, 1);
+	}
+	.ug-reveal.is-visible .e-con-inner > .e-con { opacity: 1; transform: none; }
+	.ug-reveal.is-visible .e-con-inner > .e-con:nth-child(1) { transition-delay: .10s; }
+	.ug-reveal.is-visible .e-con-inner > .e-con:nth-child(2) { transition-delay: .20s; }
+	.ug-reveal.is-visible .e-con-inner > .e-con:nth-child(3) { transition-delay: .30s; }
+	.ug-reveal.is-visible .e-con-inner > .e-con:nth-child(4) { transition-delay: .40s; }
+
+	/* The yellow rule draws itself left to right as its block arrives. */
+	.ug-reveal .elementor-widget-divider .elementor-divider-separator {
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform .7s cubic-bezier(.22, .61, .36, 1) .25s;
+	}
+	.ug-reveal.is-visible .elementor-widget-divider .elementor-divider-separator {
+		transform: scaleX(1);
+	}
+}
+
+/* ------------------------------------------------ images that follow the mouse */
+
+/*
+ * Keep this dumb on purpose.
+ *
+ * The previous version gave the frame `aspect-ratio: 4/3` and the image
+ * `height: 100%; object-fit: cover`. On a phone that cropped the picture top
+ * and bottom — the client sent a screenshot of exactly that. Any frame whose
+ * ratio does not match the photograph will crop it, and `aspect-ratio` is not
+ * honoured by older mobile Safari at all, which makes the result differ between
+ * devices for no benefit.
+ *
+ * So: the image simply keeps its own proportions and is always shown whole. The
+ * drift is a transform on top of that, and it only ever runs on a device with a
+ * real hovering pointer, where `overflow: hidden` trims the scaled edges.
+ */
+.ug-drift {
+	overflow: hidden;
+}
+
+.ug-drift img {
+	display: block;
+	width: 100%;
+	height: auto;
+	transform-origin: center;
+	transition: transform .5s cubic-bezier(.22, .61, .36, 1);
+}
+
+/* No hovering pointer: never transform, so nothing can be cropped or stranded. */
+@media (hover: none), (pointer: coarse) {
+	.ug-drift img { transform: none !important; transition: none; }
+}
+
+/* ------------------------------------------- photograph behind the whole page */
+
+/*
+ * The client's correction, and he was right: the photograph belongs to the
+ * PAGE, not to one section. It sits still behind everything; the solid colour
+ * panels pass over it and cover it completely; it is only actually seen where a
+ * section is deliberately left transparent — the thumbnail rows.
+ *
+ * Previously each photo lived inside its own rounded box, which made it read as
+ * a porthole rather than a backdrop. "The window-like effect is too extreme"
+ * was exactly the right diagnosis.
+ *
+ * It is one Elementor section with the class ug-page-photo, so the client can
+ * swap the image in the editor like any other background; this lifts it out of
+ * the flow and pins it behind the page.
+ */
+.ug-page-photo {
+	position: fixed !important;
+	inset: 0;
+	/* Must beat the z-index:1 that every other .e-con gets below, or the photo
+	   sits level with the content and the opaque panels no longer cover it. */
+	z-index: 0 !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	border-radius: 0 !important;
+	pointer-events: none;
+}
+
+.ug-page-photo > * { display: none; }
+
+/* Everything else stands in front of it. */
+.elementor > .e-con,
+.ehf-footer,
+.ehf-header ~ * { position: relative; z-index: 1; }
+
+/*
+ * A section that lets the page photograph through. Used for thumbnail rows:
+ * full available width, rounded, no colour of its own.
+ */
+.ug-open {
+	background-color: transparent !important;
+}
+
+.ug-open > .e-con-inner {
+	border-radius: 40px;
+	padding-top: 44px;
+	padding-bottom: 44px;
+	/* Just enough scrim to hold a heading over a busy photograph. The picture
+	   stays clearly visible — this is only about the type being readable. */
+	background-color: rgba(25, 23, 24, .38);
+}
+
+/* Type in an open band sits on the photograph, so it goes light. */
+.ug-open .elementor-heading-title,
+.ug-open h1, .ug-open h2, .ug-open h3,
+.ug-open .elementor-widget-text-editor {
+	color: #FFFFFF !important;
+}
+
+/* --------------------------------- background: photograph <-> flat colour */
+
+/*
+ * Elementor keeps the background image; this adds the colour layer on top and
+ * the script fades it as the section crosses the viewport, so the photograph
+ * surfaces in the middle of the pass and the flat colour returns at either end.
+ *
+ * It has to be a pseudo-element here rather than Elementor's own background
+ * overlay: in Elementor 4 that overlay is itself drawn as a pseudo-element, not
+ * a DOM node, so there is nothing for JS to set an opacity on.
+ *
+ * --ug-veil defaults to 1, which means with JS disabled the section is simply
+ * the solid colour — the readable state.
+ */
+.ug-backdrop {
+	position: relative;
+	--ug-veil: 1;
+}
+
+.ug-backdrop::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background-color: var(--e-global-color-primary);
+	opacity: var(--ug-veil);
+	transition: opacity .15s linear;
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+.ug-backdrop > .e-con-inner,
+.ug-backdrop > * {
+	position: relative;
+	z-index: 2;
+}
+
+/* ------------------------------------------------------------------ helpers */
+
+/* Placeholder images keep their aspect ratio when a card stretches. */
+.ug-card-media img { width: 100%; height: auto; display: block; }
+
+/* Keep the angled dividers from ever producing a horizontal scrollbar. */
+body { overflow-x: hidden; }
+
+
+/* --------------------------------------------------------------- course map */
+
+.ug-map {
+	width: 100%;
+	min-height: 480px;
+	border-radius: 28px;
+	overflow: hidden;
+	background: #D5DBE0;
+}
+
+@media (max-width: 767px) {
+	.ug-map { min-height: 340px; }
+}
+
+/* The marker is drawn inline as SVG; these two variables colour it, so it
+   follows the palette rather than being a baked-in image. */
+.ug-map-pin {
+	--ug-pin-fill: var(--e-global-color-yellow, #F3D849);
+	--ug-pin-stroke: var(--e-global-color-secondary, #191718);
+	background: none;
+	border: 0;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .35));
+	cursor: pointer;
+	transition: transform .18s ease;
+}
+
+.ug-map-pin:hover { transform: scale(1.12); }
+
+.leaflet-popup-content-wrapper {
+	border-radius: 14px;
+	padding: 4px 6px;
+}
+
+.ug-map-title {
+	display: block;
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+	font-size: 16px;
+	font-weight: 800;
+	text-transform: uppercase;
+	color: var(--e-global-color-secondary);
+}
+
+.ug-map-desc {
+	display: block;
+	margin-top: 4px;
+	color: #5B6166;
+	font-size: 14px;
+}
+
+.ug-map-link {
+	display: inline-block;
+	margin-top: 10px;
+	padding: 8px 16px;
+	background: var(--e-global-color-primary);
+	color: #FFFFFF !important;
+	border-radius: 0;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-decoration: none !important;
+}
+
+/* ------------------------------------------------- sections kept in reserve */
+
+/*
+ * Built, styled and ready, but not shown yet. To switch one on, open the
+ * section in Elementor, go to Advanced > CSS Classes and delete the word
+ * "ug-inactive". Nothing else to configure.
+ */
+.ug-inactive { display: none !important; }
+
+
+/* ---------------------------------------------------------------- scorecard */
+
+.ug-sc-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px;
+	align-items: flex-end;
+	margin-bottom: 26px;
+}
+
+.ug-sc-controls label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: var(--e-global-color-secondary);
+}
+
+.ug-sc-controls input {
+	width: 92px;
+	padding: 11px 12px;
+	border: 2px solid var(--e-global-color-secondary);
+	background: #FFFFFF;
+	font-size: 16px;
+}
+
+.ug-sc-controls button {
+	padding: 13px 24px;
+	border: 2px solid var(--e-global-color-secondary);
+	background: var(--e-global-color-secondary);
+	color: var(--e-global-color-yellow);
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.ug-sc-controls button.ug-sc-reset,
+.ug-sc-controls button.ug-sc-print {
+	background: transparent;
+	color: var(--e-global-color-secondary);
+}
+
+/* The grid scrolls sideways rather than squashing: 18 holes will not fit on a
+   phone, and a squashed column is unusable on a course. */
+.ug-sc-grid { overflow-x: auto; }
+
+.ug-sc-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #FFFFFF;
+	font-size: 15px;
+}
+
+.ug-sc-table th,
+.ug-sc-table td {
+	border: 1px solid #C9CDD1;
+	padding: 6px;
+	text-align: center;
+}
+
+.ug-sc-table th {
+	background: var(--e-global-color-background);
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.ug-sc-name-col { min-width: 140px; text-align: left !important; }
+.ug-sc-total-col { min-width: 80px; background: var(--e-global-color-background); font-weight: 800; }
+
+.ug-sc-table input {
+	width: 100%;
+	min-width: 44px;
+	border: 0;
+	padding: 8px 4px;
+	font-size: 16px;      /* 16px stops iOS zooming in on focus */
+	text-align: center;
+	background: transparent;
+}
+
+.ug-sc-table input[type="text"] { text-align: left; }
+.ug-sc-table input:focus { outline: 2px solid var(--e-global-color-primary); }
+
+@media print {
+	.ehf-header, .ehf-footer, .ug-sc-controls, .ug-page-photo { display: none !important; }
+	.ug-sc-table input { border-bottom: 1px solid #999; }
+}
