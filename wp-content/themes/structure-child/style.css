@@ -273,67 +273,87 @@ h1, h2, h3, h4, h5, h6,
 	.ug-drift img { transform: none !important; transition: none; }
 }
 
-/* ------------------------------------------- photograph behind the whole page */
+/* ------------------------------------- photograph, seen only through openings */
 
 /*
- * The client's correction, and he was right: the photograph belongs to the
- * PAGE, not to one section. It sits still behind everything; the solid colour
- * panels pass over it and cover it completely; it is only actually seen where a
- * section is deliberately left transparent — the thumbnail rows.
+ * The client's refinement, and it is the correct one: the photograph must be
+ * visible ONLY where thumbnails are. A full-page layer behind everything showed
+ * slivers of image in the gaps between panels, which he spotted.
  *
- * Previously each photo lived inside its own rounded box, which made it read as
- * a porthole rather than a backdrop. "The window-like effect is too extreme"
- * was exactly the right diagnosis.
- *
- * It is one Elementor section with the class ug-page-photo, so the client can
- * swap the image in the editor like any other background; this lifts it out of
- * the flow and pins it behind the page.
- */
-.ug-page-photo {
-	position: fixed !important;
-	inset: 0;
-	/* Must beat the z-index:1 that every other .e-con gets below, or the photo
-	   sits level with the content and the opaque panels no longer cover it. */
-	z-index: 0 !important;
-	min-height: 0 !important;
-	padding: 0 !important;
-	margin: 0 !important;
-	background-size: cover;
-	background-position: center center;
-	background-repeat: no-repeat;
-	border-radius: 0 !important;
-	pointer-events: none;
-}
-
-.ug-page-photo > * { display: none; }
-
-/* Everything else stands in front of it. */
-.elementor > .e-con,
-.ehf-footer,
-.ehf-header ~ * { position: relative; z-index: 1; }
-
-/*
- * A section that lets the page photograph through. Used for thumbnail rows:
- * full available width, rounded, no colour of its own.
+ * So the photo is not behind the page at all. It belongs to the open bands, and
+ * `background-attachment: fixed` is what makes several of them read as windows
+ * onto one continuous picture rather than as separate crops: the image is
+ * positioned against the viewport, so each opening reveals whichever part of it
+ * happens to line up. Between the openings there is simply page colour.
  */
 .ug-open {
-	background-color: transparent !important;
+	background-attachment: fixed;
+	background-position: center center;
+	background-size: cover;
+	background-repeat: no-repeat;
 }
 
-.ug-open > .e-con-inner {
-	border-radius: 40px;
-	padding-top: 44px;
-	padding-bottom: 44px;
-	/* Just enough scrim to hold a heading over a busy photograph. The picture
-	   stays clearly visible — this is only about the type being readable. */
-	background-color: rgba(25, 23, 24, .38);
+/* iOS has never supported fixed attachment properly; there it scrolls normally,
+   which still looks right, it just stops being one continuous image. */
+@media (hover: none), (pointer: coarse), (max-width: 1024px) {
+	.ug-open { background-attachment: scroll; }
 }
 
-/* Type in an open band sits on the photograph, so it goes light. */
+/*
+ * A scrim, drawn as a pseudo-element across the whole band rather than as a
+ * background colour on the inner block: the inner block is boxed, so a colour
+ * there would stop short of the band's edges and read as a second panel. It is
+ * darkest at the top, where the heading sits, and lifts over the thumbnails so
+ * the photograph still comes through under them.
+ */
+.ug-open { position: relative; }
+
+.ug-open::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(180deg,
+		rgba(25, 23, 24, .62) 0%,
+		rgba(25, 23, 24, .34) 46%,
+		rgba(25, 23, 24, .30) 100%);
+}
+
+.ug-open > * { position: relative; z-index: 1; }
+
 .ug-open .elementor-heading-title,
 .ug-open h1, .ug-open h2, .ug-open h3,
 .ug-open .elementor-widget-text-editor {
 	color: #FFFFFF !important;
+}
+
+/* An open band whose section is switched off leaves no trace at all. */
+.ug-open.ug-inactive { display: none !important; }
+
+/* ------------------------------------------------- thumbnails, symmetrically */
+
+/*
+ * Five columns, and a part-filled row sits symmetrically rather than flushing
+ * left. The client's rule, which is a good one: an odd number of slots gives a
+ * true centre, so 1 sits in the middle, 2 straddle it, 4 leave the middle empty.
+ * Positions are assigned by thumbs.js; this is only the frame.
+ */
+.ug-thumbs {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 20px;
+	width: 100%;
+}
+
+@media (max-width: 1024px) {
+	.ug-thumbs { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 767px) {
+	.ug-thumbs { grid-template-columns: repeat(2, 1fr); }
+	/* Placement is only meaningful at the full five columns. */
+	.ug-thumbs > * { grid-column: auto !important; }
 }
 
 /* --------------------------------- background: photograph <-> flat colour */
@@ -547,4 +567,23 @@ body { overflow-x: hidden; }
 @media print {
 	.ehf-header, .ehf-footer, .ug-sc-controls, .ug-page-photo { display: none !important; }
 	.ug-sc-table input { border-bottom: 1px solid #999; }
+}
+
+.ug-thumbs .ug-thumb {
+	display: block;
+	overflow: hidden;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, .92);
+	line-height: 0;
+}
+
+.ug-thumbs .ug-thumb img {
+	width: 100%;
+	height: auto;
+	display: block;
+	transition: transform .45s cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.ug-thumbs .ug-thumb:hover img { transform: scale(1.06); }
 }
