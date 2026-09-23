@@ -304,6 +304,27 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /*
+ * The trap that made the picture scroll with the page, and it is worth spelling
+ * out because nothing warns you: an element with a `transform` (or a
+ * `will-change` that names one) becomes the containing block for its own fixed
+ * background, so the browser renders `background-attachment: fixed` exactly as
+ * if it said `scroll`. getComputedStyle still answers "fixed" — the property is
+ * applied, only the painting ignores it. The band used to carry .ug-reveal,
+ * which animates it in with a translate, and that was enough.
+ *
+ * The class is gone from the generator; this rule is the belt to that braces,
+ * so it cannot come back by way of a plugin or a copied section.
+ */
+.ug-open,
+.ug-open.ug-reveal {
+	transform: none !important;
+	will-change: auto !important;
+	filter: none !important;
+	perspective: none !important;
+	opacity: 1 !important;
+}
+
+/*
  * Why the photo sits on the band rather than on a layer behind the page: a
  * transparent hole punched over a page-wide layer cannot be given rounded
  * corners — the corners are transparent too, so the picture shows outside the
