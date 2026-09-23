@@ -276,28 +276,41 @@ h1, h2, h3, h4, h5, h6,
 /* ------------------------------------- photograph, seen only through openings */
 
 /*
- * The client's refinement, and it is the correct one: the photograph must be
- * visible ONLY where thumbnails are. A full-page layer behind everything showed
- * slivers of image in the gaps between panels, which he spotted.
+ * How the photograph works, in the client's own words: one picture, pinned to
+ * the viewport, behind the whole page. Every section that carries no image has
+ * an opaque colour and slides over it. Only the bands that do carry images or
+ * thumbnails are transparent, so the photo shows through them as windows.
  *
- * So the photo is not behind the page at all. It belongs to the open bands, and
- * `background-attachment: fixed` is what makes several of them read as windows
- * onto one continuous picture rather than as separate crops: the image is
- * positioned against the viewport, so each opening reveals whichever part of it
- * happens to line up. Between the openings there is simply page colour.
+ * Two earlier attempts were wrong in opposite directions. A layer behind the
+ * page with see-through sections leaked slivers of photo in the gaps between
+ * panels. Putting the photo on the band itself fixed that but killed the effect:
+ * with only one band per page there is nothing for a colour block to slide over.
+ *
+ * The piece that makes it work is that the *outer*, full-bleed container of
+ * every section is opaque and they stack edge to edge, so there is no gap left
+ * to leak through — the inset and the rounded corners live on a child.
  */
 .ug-open {
-	background-attachment: fixed;
+	background-attachment: fixed;   /* pinned to the viewport, not to the band */
 	background-position: center center;
 	background-size: cover;
 	background-repeat: no-repeat;
 }
 
-/* iOS has never supported fixed attachment properly; there it scrolls normally,
-   which still looks right, it just stops being one continuous image. */
+/* iOS has never supported fixed attachment properly; there it scrolls with the
+   page, which still looks right, it just stops being one continuous image. */
 @media (hover: none), (pointer: coarse), (max-width: 1024px) {
 	.ug-open { background-attachment: scroll; }
 }
+
+/*
+ * Why the photo sits on the band rather than on a layer behind the page: a
+ * transparent hole punched over a page-wide layer cannot be given rounded
+ * corners — the corners are transparent too, so the picture shows outside the
+ * curve and the window reads as a hard-edged rectangle. A fixed-attachment
+ * background is pinned to the viewport in exactly the same way *and* is clipped
+ * by the band's border radius.
+ */
 
 /*
  * A scrim, drawn as a pseudo-element across the whole band rather than as a
@@ -315,8 +328,9 @@ h1, h2, h3, h4, h5, h6,
 	border-radius: inherit;
 	pointer-events: none;
 	background: linear-gradient(180deg,
-		rgba(25, 23, 24, .62) 0%,
-		rgba(25, 23, 24, .34) 46%,
+		rgba(25, 23, 24, .72) 0%,
+		rgba(25, 23, 24, .58) 38%,
+		rgba(25, 23, 24, .34) 68%,
 		rgba(25, 23, 24, .30) 100%);
 }
 
@@ -341,7 +355,10 @@ h1, h2, h3, h4, h5, h6,
  */
 .ug-thumbs {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
+	/* minmax(0,…), not 1fr: a bare 1fr track cannot shrink below the intrinsic
+	   width of the image inside it, so a narrow window would push the row wider
+	   than the page instead of sizing the columns down. */
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 20px;
 	width: 100%;
 }
@@ -586,4 +603,64 @@ body { overflow-x: hidden; }
 
 @media (hover: hover) and (pointer: fine) {
 	.ug-thumbs .ug-thumb:hover img { transform: scale(1.06); }
+}
+
+/* ------------------------------------------ arguments as a list, not a rank */
+
+/*
+ * The client's point, and he is right: three arguments about one subject are
+ * information, not a display of three equal tiles. In running text you would
+ * set them one under the other, so that is what they do here — stacked full
+ * width, each opened by a hairline rule and a small arrow, no icons. The rule
+ * is what separates them; the arrow is what marks where each one starts.
+ */
+.ug-sep {
+	height: 1px;
+	width: 100%;
+	background-color: rgba(255, 255, 255, .34);
+	margin: 6px 0;
+}
+
+.ug-arg {
+	border-top: 1px solid rgba(255, 255, 255, .34);
+	padding-top: 20px;
+	width: 100%;
+}
+
+.ug-arg .elementor-heading-title {
+	display: flex;
+	align-items: baseline;
+	gap: 14px;
+}
+
+/* The arrow is a pseudo-element, so it never lands in the text the client
+   edits — he types the title and the marker appears by itself. */
+.ug-arg .elementor-heading-title::before {
+	content: "\2192";           /* → */
+	color: #F3D849;
+	font-weight: 400;
+	flex: 0 0 auto;
+}
+
+/* On a light panel the same list needs the dark hairline instead. */
+.ug-arg.ug-on-light { border-top-color: rgba(25, 23, 24, .18); }
+.ug-sep.ug-on-light { background-color: rgba(25, 23, 24, .18); }
+
+/* ------------------------------------------------------- footer, rebalanced */
+
+/*
+ * The logo gets a column of its own at the left edge and is set large; the
+ * address moves into the next column. The client asked for the gap from the
+ * logo to the left margin to match the gap from the last column to the right
+ * margin — both are now simply the boxed container's own padding, so they are
+ * equal by construction rather than by eye.
+ */
+.ug-foot-logo img {
+	width: 100%;
+	max-width: 320px;
+	height: auto;
+}
+
+@media (max-width: 1024px) {
+	.ug-foot-logo img { max-width: 240px; }
 }
