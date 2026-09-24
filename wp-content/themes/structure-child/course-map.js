@@ -123,6 +123,81 @@
 		setTimeout( function () { map.invalidateSize(); }, 300 );
 		window.addEventListener( 'resize', function () { map.invalidateSize(); },
 			{ passive: true } );
+
+		addExpander( el, map, bounds );
+	}
+
+	/**
+	 * Full-screen toggle.
+	 *
+	 * The client asked for the map to grow when the pointer is over it, so that
+	 * individual courses can be told apart once there are twenty of them. Growing
+	 * on hover is the one thing that would not work here: the map collapses again
+	 * the instant the pointer leaves it, and the pointer has to leave it to reach
+	 * a pin, to pan, or to read a popup. So the map opens on a click and stays
+	 * open — same result, minus the fight.
+	 *
+	 * Escape closes it, because anything that covers the whole screen must.
+	 */
+	function addExpander( el, map, bounds ) {
+		var btn = document.createElement( 'button' );
+		btn.type = 'button';
+		btn.className = 'ug-map-expand';
+		btn.innerHTML = '<span class="ug-map-expand-open">Karte vergrößern</span>' +
+			'<span class="ug-map-expand-close">Schließen</span>';
+		el.appendChild( btn );
+
+		function refit() {
+			map.invalidateSize();
+			if ( bounds.length > 1 ) {
+				map.fitBounds( bounds, { padding: [ 64, 64 ] } );
+			}
+		}
+
+		// Where the map lives in the page, so it can be put back exactly.
+		var home = { parent: el.parentNode, next: el.nextSibling };
+
+		function setOpen( open ) {
+			// Move the map to <body> while it is open.
+			//
+			// Not cosmetic: an ancestor of the map carries `will-change:
+			// opacity, transform` from the reveal animation, and that makes it
+			// the containing block for any position:fixed descendant. The
+			// overlay then sizes itself against that ancestor instead of the
+			// screen — measured 160px tall instead of 824. Re-parenting removes
+			// the whole class of interference rather than chasing whichever
+			// ancestor happens to introduce it. Same trap as the one that broke
+			// the fixed background photograph.
+			if ( open ) {
+				document.body.appendChild( el );
+			} else if ( home.parent ) {
+				home.parent.insertBefore( el, home.next );
+			}
+			el.classList.toggle( 'is-full', open );
+			document.body.classList.toggle( 'ug-map-open', open );
+			btn.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			// Pinch and wheel zoom only make sense once the map owns the screen;
+			// while it sits in the page the wheel must keep scrolling the page.
+			if ( open ) {
+				map.scrollWheelZoom.enable();
+			} else {
+				map.scrollWheelZoom.disable();
+			}
+			// Let the layout settle before Leaflet re-measures, or it reads the
+			// old box and leaves grey gutters.
+			setTimeout( refit, 60 );
+			setTimeout( refit, 260 );
+		}
+
+		btn.addEventListener( 'click', function () {
+			setOpen( ! el.classList.contains( 'is-full' ) );
+		} );
+
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' && el.classList.contains( 'is-full' ) ) {
+				setOpen( false );
+			}
+		} );
 	}
 
 	function start() {

@@ -290,10 +290,16 @@ h1, h2, h3, h4, h5, h6,
  * every section is opaque and they stack edge to edge, so there is no gap left
  * to leak through — the inset and the rounded corners live on a child.
  */
+/*
+ * Only the attachment is fixed here. Size and position are deliberately NOT set
+ * in this stylesheet: they are Elementor settings on each band, so the client
+ * can pick the visible part of a photograph in the editor and have it stick.
+ * A rule here would have the same specificity as Elementor's own and would win
+ * or lose depending on stylesheet order — i.e. his choice would sometimes
+ * silently do nothing.
+ */
 .ug-open {
 	background-attachment: fixed;   /* pinned to the viewport, not to the band */
-	background-position: center center;
-	background-size: cover;
 	background-repeat: no-repeat;
 }
 
@@ -442,17 +448,61 @@ body { overflow-x: hidden; }
 
 /* --------------------------------------------------------------- course map */
 
+/*
+ * The map is the working surface of this page, not an illustration, so it gets
+ * the height to prove it. The client expects around twenty courses; at the old
+ * 480px a cluster in the Ruhr area was a single smudge of overlapping pins.
+ */
 .ug-map {
+	position: relative;
 	width: 100%;
-	min-height: 480px;
+	min-height: 720px;
 	border-radius: 28px;
 	overflow: hidden;
 	background: #D5DBE0;
 }
 
-@media (max-width: 767px) {
-	.ug-map { min-height: 340px; }
+@media (max-width: 1024px) { .ug-map { min-height: 560px; } }
+@media (max-width: 767px)  { .ug-map { min-height: 400px; } }
+
+/* Opened out, the map takes the screen. Everything else is Leaflet's own. */
+.ug-map.is-full {
+	position: fixed;
+	inset: 18px;
+	width: auto;
+	min-height: 0;
+	z-index: 9000;
+	border-radius: 24px;
+	box-shadow: 0 30px 80px rgba(25, 23, 24, .45);
 }
+
+body.ug-map-open { overflow: hidden; }
+
+.ug-map-expand {
+	position: absolute;
+	right: 16px;
+	top: 16px;
+	z-index: 9100;           /* above Leaflet's own panes and controls */
+	padding: 11px 20px;
+	border: 2px solid var(--e-global-color-secondary, #191718);
+	border-radius: 0;
+	background: var(--e-global-color-yellow, #F3D849);
+	color: var(--e-global-color-secondary, #191718);
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 1.1px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.ug-map-expand:hover { background: #FFFFFF; }
+
+/* One button, two labels: whichever is wrong for the current state is hidden,
+   so the wording can never drift out of step with what the button does. */
+.ug-map-expand .ug-map-expand-close,
+.ug-map.is-full .ug-map-expand .ug-map-expand-open { display: none; }
+.ug-map.is-full .ug-map-expand .ug-map-expand-close { display: inline; }
 
 /* The marker is drawn inline as SVG; these two variables colour it, so it
    follows the palette rather than being a baked-in image. */
