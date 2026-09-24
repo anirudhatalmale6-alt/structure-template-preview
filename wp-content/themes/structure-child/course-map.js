@@ -79,7 +79,13 @@
 		var map = L.map( el, {
 			center: centre,
 			zoom: zoom,
-			scrollWheelZoom: false,   // so the page still scrolls over the map
+			// The wheel is handled below, not by Leaflet: plain scrolling must
+			// keep scrolling the page, and only Ctrl + wheel may zoom.
+			scrollWheelZoom: false,
+			// zoomSnap 0 lets the map settle between whole zoom levels, so the
+			// wheel zooms smoothly instead of jumping a step at a time.
+			zoomSnap: 0,
+			zoomDelta: 0.4,
 			attributionControl: true,
 		} );
 
@@ -125,6 +131,62 @@
 			{ passive: true } );
 
 		addExpander( el, map, bounds );
+		addWheelZoom( el, map );
+	}
+
+	/**
+	 * Ctrl + wheel zooms; a plain wheel scrolls the page and says so.
+	 *
+	 * A map that swallows the wheel is a trap — you scroll down the page, the
+	 * pointer happens to cross the map, and the page stops moving while the map
+	 * zooms to street level. Leaflet's own answer is to ignore the wheel
+	 * entirely, which is safe but leaves no way to zoom without the + and −
+	 * buttons. The client asked for the middle road and he is right: zoom on
+	 * Ctrl + wheel, and when someone scrolls over the map without Ctrl, tell
+	 * them that is how it works instead of doing nothing.
+	 */
+	function addWheelZoom( el, map ) {
+		var hint = document.createElement( 'div' );
+		hint.className = 'ug-map-hint';
+		// ⌘ on a Mac, where Ctrl is not the modifier people reach for.
+		var mac = /Mac|iPod|iPhone|iPad/.test( navigator.platform );
+		hint.textContent = mac
+			? 'Zum Zoomen ⌘ gedrückt halten und scrollen'
+			: 'Zum Zoomen STRG gedrückt halten und scrollen';
+		el.appendChild( hint );
+
+		var timer;
+		function flash() {
+			el.classList.add( 'is-hinting' );
+			clearTimeout( timer );
+			timer = setTimeout( function () {
+				el.classList.remove( 'is-hinting' );
+			}, 1400 );
+		}
+
+		el.addEventListener( 'wheel', function ( e ) {
+			// Open out to the full screen, the page behind cannot scroll, so the
+			// wheel is free to zoom on its own.
+			var full = el.classList.contains( 'is-full' );
+
+			if ( ! full && ! e.ctrlKey && ! e.metaKey ) {
+				flash();
+				return;                    // let the page scroll
+			}
+
+			// Ctrl + wheel is also the browser's own page-zoom shortcut, so it
+			// has to be claimed explicitly — which needs a non-passive listener.
+			e.preventDefault();
+
+			var delta = -e.deltaY;
+			if ( e.deltaMode === 1 ) {
+				delta *= 16;               // lines, not pixels
+			}
+			var step = Math.max( -1.2, Math.min( 1.2, delta / 180 ) );
+			var point = map.mouseEventToContainerPoint( e );
+			map.setZoomAround( map.containerPointToLatLng( point ),
+				map.getZoom() + step );
+		}, { passive: false } );
 	}
 
 	/**

@@ -484,6 +484,7 @@ body.ug-map-open { overflow: hidden; }
 	top: 16px;
 	z-index: 9100;           /* above Leaflet's own panes and controls */
 	padding: 11px 20px;
+	transition: padding .15s ease, font-size .15s ease;
 	border: 2px solid var(--e-global-color-secondary, #191718);
 	border-radius: 0;
 	background: var(--e-global-color-yellow, #F3D849);
@@ -497,6 +498,62 @@ body.ug-map-open { overflow: hidden; }
 }
 
 .ug-map-expand:hover { background: #FFFFFF; }
+
+/* Once the map owns the screen the way out has to be obvious — the client
+   found the old one only on second look. Bigger, and with an explicit ×. */
+.ug-map.is-full .ug-map-expand {
+	right: 22px;
+	top: 22px;
+	padding: 17px 30px;
+	font-size: 16px;
+	letter-spacing: 1.4px;
+	box-shadow: 0 6px 20px rgba(25, 23, 24, .35);
+}
+
+.ug-map.is-full .ug-map-expand .ug-map-expand-close::before {
+	content: "\00D7";
+	margin-right: 10px;
+	font-size: 22px;
+	line-height: 1;
+	vertical-align: -2px;
+}
+
+/* ----------------------------------------------- "hold Ctrl to zoom" notice */
+
+/*
+ * Shown only when someone turns the wheel over the map without the modifier.
+ * It answers the question at the moment it is asked and then gets out of the
+ * way; a permanent label would be noise on every visit.
+ */
+.ug-map-hint {
+	position: absolute;
+	inset: 0;
+	z-index: 9050;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: rgba(25, 23, 24, .55);
+	color: #FFFFFF;
+	font-family: var(--e-global-typography-primary-font-family), system-ui, sans-serif;
+	font-size: 20px;
+	font-weight: 700;
+	letter-spacing: .6px;
+	text-align: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .18s ease, visibility .18s ease;
+	pointer-events: none;      /* never swallows a click meant for the map */
+}
+
+.ug-map.is-hinting .ug-map-hint { opacity: 1; visibility: visible; }
+
+/* Full screen the wheel zooms on its own, so the notice would be a lie. */
+.ug-map.is-full .ug-map-hint { display: none; }
+
+@media (max-width: 767px) {
+	.ug-map-hint { font-size: 16px; }
+}
 
 /* One button, two labels: whichever is wrong for the current state is hidden,
    so the wording can never drift out of step with what the button does. */
